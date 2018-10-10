@@ -8,8 +8,10 @@ import (
 	"github.com/spf13/viper"
 	"log"
 	"net/http"
-	"poc_config/consul/srv1/configuration"
+	myConf "poc_config/consul/srv1/configuration"
 	"poc_config/consul/srv1/service"
+
+	"poc_config/consul/lib/configuration"
 
 	//"net/http"
 	//"os"
@@ -91,11 +93,11 @@ func checkConsl(){
 var confManager *configuration.Manager
 
 
-func ParseConfigFromViper() (*configuration.AppConfig, error) {
+func ParseConfigFromViper() (*myConf.AppConfig, error) {
 
-	var c = new(configuration.AppConfig)
+	var c = new(myConf.AppConfig)
 	c.Key1=viper.GetString("Key1")
-	c.Title=viper.GetString("Title")
+	c.Greeting =viper.GetString("Greeting")
 
 	return c, nil
 }
@@ -116,7 +118,7 @@ func main() {
 	appConfig,_:= ParseConfigFromViper()
 	log.Printf("appConfig %v ", appConfig)
 
-	configuration.AppConfiguration = appConfig
+	myConf.AppConfiguration = appConfig
 
 	//потом подписаться на обновления
 
