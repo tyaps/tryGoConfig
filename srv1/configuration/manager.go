@@ -20,7 +20,7 @@ func New() (*Manager, error) {
 }
 
 
-func (*Manager) LoadConfiguration() (error){
+func (*Manager) LoadConfiguration(key string) (error){
 
 	//загружаем из consul
 	client, err := api.NewClient(api.DefaultConfig())
@@ -31,7 +31,7 @@ func (*Manager) LoadConfiguration() (error){
 	// Get a handle to the KV API
 	kv := client.KV()
 
-	pair, _, err := kv.Get("srv1", nil) //TODO: serviceName
+	pair, _, err := kv.Get(key, nil) //TODO: serviceName
 
 	if err != nil {
 		panic(err)
@@ -48,20 +48,10 @@ func (*Manager) LoadConfiguration() (error){
 		panic(err)
 	}
 
-	c,_:= ParseConfigFromViper()
-	fmt.Printf("KV: %v", c)
 
 	return  nil
 
 }
 
 
-//not used
-func ParseConfigFromViper() (*AppConfig, error) {
 
-	var c = new(AppConfig)
-	c.Key1=viper.GetString("Key1")
-	c.Key2=viper.GetString("Key2")
-
-	return c, nil
-}

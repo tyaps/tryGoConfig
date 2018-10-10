@@ -4,7 +4,13 @@ import (
 	"fmt"
 	"github.com/armon/consul-api"
 	"github.com/hashicorp/consul/api"
+	"github.com/spf13/viper"
+	"io/ioutil"
 	"log"
+	"os"
+	"path/filepath"
+	"strings"
+
 	//"time"
 
 	//"github.com/alexdzyoba/webkv/service"
@@ -77,19 +83,63 @@ type config struct{
 	Value string
 }
 
+func test1(){
+
+	//почему-то работает
+	viper.AddRemoteProvider("consul", "localhost:8500", "srv2")
+	viper.SetConfigType("yaml")
+	err := viper.ReadRemoteConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(viper.Get("key1"))
+	fmt.Println(viper.AllKeys())
+
+}
+const delimiter string="/"
+
 func readConfigs() ([]config, error){
 
-	s := []config {
-		{"srv1", `
-key1: 1
-key2: 2`,
-	},
-		{"srv2", `
-key1: 10
-key2: 20`,
-		},
+	s := []config{}
 
-	}
+	searchDir := "configs"
+
+	//fileList := []string{}
+
+	filepath.Walk(searchDir, func(path string, f os.FileInfo, err error) error {
+
+		//fmt.Printf("isDir=%v name=%v, path=%v\n", f.IsDir(), f.Name(), path)
+
+		if !f.IsDir() {
+			b, _ := ioutil.ReadFile(path)
+
+			v1:=strings.Split(path,delimiter)
+			key:= strings.Join(v1[: len(v1)-1], delimiter)
+
+			s = append(s, config{Path: key, Value: string(b)})
+		}
+
+		//fileList = append(fileList, path)
+		return nil
+	})
+
+	//for _, file := range fileList {
+	//	fmt.Println(file)
+	//}
+
+
+//	s := []config {
+//		{"srv1", `
+//key1: 1
+//key2: 2`,
+//	},
+//		{"srv2", `
+//key1: 10
+//key2: 20`,
+//		},
+//
+//	}
 
 	return s, nil
 }
@@ -117,13 +167,15 @@ func writeConfigsToStore(configs []config) error{
 
 func main() {
 
+
+
 	c, err:=readConfigs();
 
 	if  err!=nil{
 		panic(err)
 	}
 
-	log.Printf("res=%v %v", len(c), c)
+	//log.Printf("res=%v %v", len(c), c)
 
 	writeConfigsToStore(c)
 

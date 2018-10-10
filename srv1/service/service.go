@@ -69,7 +69,7 @@ func (s *Service) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	//	status = 404
 	//}
 
-	fmt.Fprint(w, "ok key1 = %v ", configuration.AppConfiguration.Key1)
+	fmt.Fprint(w, "%v", configuration.AppConfiguration.Title)
 	//
 	//log.Printf("url=\"%s\" remote=\"%s\" key=\"%s\" status=%d\n",
 	//	r.URL, r.RemoteAddr, key, status)

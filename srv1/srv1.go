@@ -95,7 +95,7 @@ func ParseConfigFromViper() (*configuration.AppConfig, error) {
 
 	var c = new(configuration.AppConfig)
 	c.Key1=viper.GetString("Key1")
-	c.Key2=viper.GetString("Key2")
+	c.Title=viper.GetString("Title")
 
 	return c, nil
 }
@@ -106,7 +106,7 @@ func main() {
 
 	confManager = new(configuration.Manager) //configuration.New() //
 
-	err:= confManager.LoadConfiguration() // getConfig()
+	err:= confManager.LoadConfiguration("configs/srv1") // getConfig()
 	if err!=nil{
 		panic(err)
 	}
